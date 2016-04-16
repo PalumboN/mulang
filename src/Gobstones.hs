@@ -29,18 +29,18 @@ program = many $ procedure <|> gbsProgram <|> function
 
 gbsProgram = do
                 reserved "program"
-                commands
-                return $ ProgramDeclaration []
+                c <- commands
+                return $ ProgramDeclaration (unguardedBody [] c)
 
 procedure = do
               reserved "procedure"
               (name, p) <- body upperIdentifier
-              return $ ProcedureDeclaration name [Equation p (UnguardedBody MuNull)]
+              return $ ProcedureDeclaration name (unguardedBody p MuNull)
 
 function = do
               reserved "function"
               (name, p) <- body lowerIdentifier
-              return $ FunctionDeclaration name [Equation p (UnguardedBody MuNull)]     
+              return $ FunctionDeclaration name (unguardedBody p MuNull)
 
 body identifier = do 
                     name <- identifier
@@ -51,7 +51,26 @@ body identifier = do
 upperIdentifier = many1 letter
 lowerIdentifier = upperIdentifier
 
-commands = braces spaces
+commands = do
+              c <- braces (many simpleCommand)
+              return $ if null c then MuNull else Sequence c
+
+simpleCommand = moverCall
+
+moverCall = do
+              reserved "Mover"
+              d <- parens direction
+              return $ (Application (Variable "Mover") [d])
+
+direction = concreteDir "Norte" <|> concreteDir "Este" <|> concreteDir "Sur" <|> concreteDir "Oeste"
+              
+concreteDir name = do
+                      reserved name
+                      return (MuLiteral name)
+
+arguments = do
+              args <- parens $ commaSep lowerIdentifier
+              return $ map Variable args
 
 parameters = do
               args <- parens $ commaSep lowerIdentifier

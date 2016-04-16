@@ -53,6 +53,7 @@ data Expression
         | MuNumber Double                                      -- any number
         | MuBool Bool
         | MuString String
+        | MuLiteral String
         | MuTuple [Expression]
         | MuList [Expression]
   deriving (Eq, Show, Read, Generic)
