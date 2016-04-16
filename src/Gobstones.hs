@@ -14,6 +14,7 @@ lexer = P.makeTokenParser gobstonesStyle
 parens = P.parens lexer
 reserved = P.reserved lexer
 commaSep = P.commaSep lexer
+braces = P.braces lexer
 
 gbs :: String -> Expression
 gbs string 
@@ -41,7 +42,7 @@ procedure = do
 upperIdentifier = many1 letter
 lowerIdentifier = upperIdentifier
 
-commands = spaces <* char '{' <* spaces <* char '}'
+commands = braces spaces
 
 parameters = do
               args <- parens $ commaSep lowerIdentifier
