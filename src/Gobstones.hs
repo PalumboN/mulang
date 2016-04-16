@@ -11,9 +11,9 @@ import Control.Applicative hiding ((<|>), many, optional)
 gobstonesStyle = javaStyle
 
 lexer = P.makeTokenParser gobstonesStyle
-braces = P.braces lexer
-commaSep = P.commaSep lexer
+parens = P.parens lexer
 reserved = P.reserved lexer
+commaSep = P.commaSep lexer
 
 gbs :: String -> Expression
 gbs string 
@@ -24,7 +24,7 @@ parseGobstones :: String -> Either ParseError Expression
 parseGobstones = fmap compact . parse program ""
 
 program :: Parsec String a [Expression]
-program = many $ (try procedure) <|> gbsProgram
+program = many $ procedure <|> gbsProgram
 
 gbsProgram = do
                 reserved "program"
@@ -34,9 +34,9 @@ gbsProgram = do
 procedure = do
               reserved "procedure"
               name <- upperIdentifier
-              parameters
+              p <- parameters
               commands
-              return $ ProcedureDeclaration name []
+              return $ ProcedureDeclaration name [Equation p (UnguardedBody MuNull)]
 
 upperIdentifier = many1 letter
 lowerIdentifier = upperIdentifier
@@ -44,7 +44,5 @@ lowerIdentifier = upperIdentifier
 commands = spaces <* char '{' <* spaces <* char '}'
 
 parameters = do
-              char '('
-              args <- commaSep lowerIdentifier
-              char ')'
+              args <- parens $ commaSep lowerIdentifier
               return $ map VariablePattern args
