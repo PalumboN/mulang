@@ -47,3 +47,4 @@ parameters = do
               char '('
               args <- commaSep lowerIdentifier
               char ')'
+              return $ map VariablePattern args
