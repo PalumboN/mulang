@@ -4,6 +4,7 @@ import Text.Parsec
 import Language.Mulang
 import Language.Mulang.Builder
 import Data.Either
+import Control.Applicative hiding ((<|>), many)
 
 gbs :: String -> Expression
 gbs string | (Right v) <- parseGobstones string = v
@@ -14,10 +15,9 @@ parseGobstones = fmap compact . parse program ""
 program :: Parsec String a [Expression]
 program = many gbsProgram
 
+commands = spaces <* char '{' <* spaces <* char '}'
+
 gbsProgram = do
                 string "program"
-                spaces
-                char '{'
-                spaces
-                char '}'
+                commands
                 return $ ProgramDeclaration []
