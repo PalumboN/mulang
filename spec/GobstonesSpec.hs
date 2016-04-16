@@ -9,3 +9,6 @@ spec = do
   describe "parse" $ do
     it "empty program" $ do
       gbs "program {}" `shouldBe` ProgramDeclaration []
+
+    it "empty procedure" $ do
+      gbs "procedure SomeName() {}" `shouldBe` ProcedureDeclaration "SomeName" []
