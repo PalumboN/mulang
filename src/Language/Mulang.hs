@@ -31,6 +31,7 @@ data Expression
                                                         -- optionally pattern matched function
         | ProcedureDeclaration Identifier [Equation]    -- classic imperative-style procedure
         | MethodDeclaration Identifier [Equation]
+        | ProgramDeclaration [Equation]
         | VariableDeclaration Identifier Expression
         | AttributeDeclaration Identifier Expression
         | ObjectDeclaration Identifier Expression
