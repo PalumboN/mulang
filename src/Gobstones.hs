@@ -25,7 +25,7 @@ parseGobstones :: String -> Either ParseError Expression
 parseGobstones = fmap compact . parse program ""
 
 program :: Parsec String a [Expression]
-program = many $ procedure <|> gbsProgram
+program = many $ procedure <|> gbsProgram <|> function
 
 gbsProgram = do
                 reserved "program"
@@ -38,6 +38,13 @@ procedure = do
               p <- parameters
               commands
               return $ ProcedureDeclaration name [Equation p (UnguardedBody MuNull)]
+
+function = do
+              reserved "function"
+              name <- lowerIdentifier
+              p <- parameters
+              commands
+              return $ FunctionDeclaration name [Equation p (UnguardedBody MuNull)]              
 
 upperIdentifier = many1 letter
 lowerIdentifier = upperIdentifier
