@@ -34,17 +34,19 @@ gbsProgram = do
 
 procedure = do
               reserved "procedure"
-              name <- upperIdentifier
-              p <- parameters
-              commands
+              (name, p) <- body upperIdentifier
               return $ ProcedureDeclaration name [Equation p (UnguardedBody MuNull)]
 
 function = do
               reserved "function"
-              name <- lowerIdentifier
-              p <- parameters
-              commands
-              return $ FunctionDeclaration name [Equation p (UnguardedBody MuNull)]              
+              (name, p) <- body lowerIdentifier
+              return $ FunctionDeclaration name [Equation p (UnguardedBody MuNull)]     
+
+body identifier = do 
+                    name <- identifier
+                    p <- parameters
+                    commands
+                    return (name, p)
 
 upperIdentifier = many1 letter
 lowerIdentifier = upperIdentifier
