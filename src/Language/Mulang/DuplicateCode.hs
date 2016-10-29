@@ -1,18 +1,18 @@
-module Language.Mulang.DuplicateCode (hasDuplicateCode,f) where
+module Language.Mulang.DuplicateCode (hasDuplicateCode) where
 
 
 import Language.Mulang
 import Language.Mulang.Explorer (expressionsOf)
 import qualified Data.Hashable as H (hash)
 import Data.List (nub, subsequences)
+import Data.List.Split (chunksOf)
 
 
 
 
 hasDuplicateCode :: Expression -> Bool
-hasDuplicateCode e =  hasDuplicates (map hash (filter (not . isLightweight) (concat $ stripesOf 2 e)))
+hasDuplicateCode e =  hasDuplicates $ map hash $ filter (not . isLightweight) (concat $ stripesOf 2 e)
 
-f e = map hash (filter (not . isLightweight) (concat $ stripesOf 0 e))
 
 isLightweight :: Expression -> Bool
 isLightweight (MuNumber e)              = True
@@ -52,6 +52,7 @@ simpleProcedureBody (ProcedureDeclaration _ [equation]) = equationUnguardedBody 
 
 simpleFunctionBody :: Expression -> Expression
 simpleFunctionBody (FunctionDeclaration _ [equation]) = equationUnguardedBody equation  
+
 equationUnguardedBody (Equation _ (UnguardedBody body)) = body
 
 
@@ -63,9 +64,13 @@ stripesOf :: Int -> Expression -> [[Expression]]
 stripesOf n = concatMap (makeStripes n) . expressionsOf
 
 makeStripes :: Int -> Expression -> [[Expression]]
-makeStripes n (Sequence xs) = stripes n xs
-makeStripes _ e             = [[e]]
+--makeStripes n (EntryPoint e)               = makeStripes n e
+--makeStripes n p@(ProcedureDeclaration _ _) = makeStripes n (simpleProcedureBody p)
+--makeStripes n f@(FunctionDeclaration _ _)  = makeStripes n (simpleFunctionBody f)
+makeStripes n (Sequence xs)                = stripes n xs
+makeStripes _ e                            = [[e]]
 
-stripes :: Int -> [a] -> [[a]]
-stripes n = filter ( (>n) . length) . subsequences
+
+stripes :: Int -> [Expression] -> [[Expression]]
+stripes n = filter ( (>n) . length) . subsequences . take 16 
 

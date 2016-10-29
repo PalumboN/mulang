@@ -40,6 +40,26 @@ spec = do
         let code = "function f(){ Sacar(Verde) return 2 } function g(){return 3 }"
         hasDuplicateCode (js code) `shouldBe` False
 
+      it "is False when a function no repeat code" $ do
+        let code = "function f(){ PonerYmover(Norte,Verde) PonerYmover(Este,Verde) PonerYmover(Sur,Verde) PonerYmover(Oeste,Verde) }"
+        hasDuplicateCode (js code) `shouldBe` False
+
+      it "is False when a function no repeat code" $ do
+        let code = "function f(){ Poner(Rojo) Mover(Norte) return superF(Azul,Verde)} function g() {if(superF(Azul,Verde)){Poner(Rojo)}else{Poner(Verde)}}"
+        hasDuplicateCode (js code) `shouldBe` False
+
+      it "is False when a function no repeat code" $ do
+        let code = "function f(){if(puedeMover(Este)){ MoverYPonerDiagonal(Este) } else{ MoverYPonerDiagonal(Oeste)  } }"
+        hasDuplicateCode (js code) `shouldBe` False
+
+      it "is False when a function no repeat code" $ do
+        let code = "function f(){Poner(Verde) Sarasa() Sarasa()} function Sarasa(){Mover(Este) Mover(Este) Mover(Este)}"
+        hasDuplicateCode (js code) `shouldBe` False
+
+      it "is False when a function no repeat code" $ do
+        let code = "function f(){ Proc() return (hayBolitas(Verde) && puedeMover(Este))} function Proc(){Poner(Verde) Mover(Sur)}"
+        hasDuplicateCode (js code) `shouldBe` False
+
       it "is True when two functions are equals" $ do
         let code = "function f(){if(true){}else{} return x} function g(){if(true){}else{} return x}"
         hasDuplicateCode (js code) `shouldBe` True
@@ -56,9 +76,26 @@ spec = do
         let code = "function f(){ Sacar(Verde) return (x * 2) == y } function g(){ while((x * 2) == y){} return 2 }"
         hasDuplicateCode (js code) `shouldBe` True
 
-      --it "is True when a function repeat code" $ do
-        --let code = "function f(){Poner(Verde) Mover(Norte) Poner(Verde)Mover(Norte) Poner(Verde) Mover(Este) Poner(Verde) Mover(Este) Poner(Verde) Mover(Este) Poner(Verde) Mover(Este) Poner(Verde) Mover(Sur) Poner(Verde) Mover(Sur) Poner(Verde) Mover(Oeste) Poner(Verde) Mover(Oeste) Poner(Verde) Mover(Oeste) Poner(Verde) }"
-        --f (js code) `shouldBe` []
+      it "is True when a function repeat code" $ do
+        let code = "function f(){Poner(Verde) Mover(Norte) Poner(Verde) Mover(Este) Poner(Verde) Mover(Sur) Poner(Verde) Mover(Oeste) }"
+        hasDuplicateCode (js code) `shouldBe` True
+
+      it "is True when a function repeat code" $ do
+        let code = "function f(){Poner(Verde) MoverDestino(Norte,Este) Poner(Verde) MoverDestino(Norte,Este) Poner(Verde) VolverAlOrigen() Poner(Negro) MoverDestino(Norte,Este) Poner(Negro) MoverDestino(Norte,Este) Poner(Negro) }"
+        hasDuplicateCode (js code) `shouldBe` True
+
+      it "is True when a function repeat code" $ do
+        let code = "function f(){if(puedeMover(Este)){Mover(Este) Poner(Rojo) Poner(Verde) Poner(Negro)} else{Mover(Oeste) Poner(Rojo) Poner(Verde) Poner(Negro)} }"
+        hasDuplicateCode (js code) `shouldBe` True
+
+      it "is True when a function repeat code" $ do
+        let code = "function f(){if(puedeMover(Este)){ Mover(Este) PonerDiagonal() } else{ Mover(Oeste) PonerDiagonal() } }"
+        hasDuplicateCode (js code) `shouldBe` True
+
+      it "is True when a function repeat code" $ do
+        let code = "function f(){ Poner(Rojo) Mover(Este) return (puedeMover(Este) && hayBolitas(Rojo) && hayBolitas(Verde))} function g(){if(puedeMover(Este) && hayBolitas(Rojo) && hayBolitas(Verde)){Poner(Rojo)}else{if(puedeMover(Este) && hayBolitas(Azul) && hayBolitas(Negro)){Poner(Verde)}else{} } }"
+        hasDuplicateCode (js code) `shouldBe` True
+
 
 
 
