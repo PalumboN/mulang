@@ -4,14 +4,14 @@ module Language.Mulang.DuplicateCode (hasDuplicateCode) where
 import Language.Mulang
 import Language.Mulang.Explorer (expressionsOf)
 import qualified Data.Hashable as H (hash)
-import Data.List (nub, subsequences)
+import Data.List (nub, subsequences, tails, inits)
 import Data.List.Split (chunksOf)
 
 
 
 
 hasDuplicateCode :: Expression -> Bool
-hasDuplicateCode e =  hasDuplicates $ map hash $ filter (not . isLightweight) (concat $ stripesOf 2 e)
+hasDuplicateCode e =  hasDuplicates $ map hash $ filter (not . isLightweight) (concat $ stripesOf e)
 
 
 isLightweight :: Expression -> Bool
@@ -60,17 +60,22 @@ positionalHash :: [Expression] -> Int
 positionalHash = sum . zipWith (\index expression -> (31^index) * hash expression) [1..] . reverse 
 
 
-stripesOf :: Int -> Expression -> [[Expression]]
-stripesOf n = concatMap (makeStripes n) . expressionsOf
+stripesOf :: Expression -> [[Expression]]
+stripesOf = map makeStripes . expressionsOf
 
-makeStripes :: Int -> Expression -> [[Expression]]
---makeStripes n (EntryPoint e)               = makeStripes n e
+makeStripes :: Expression -> [Expression]
+--makeStripes (EntryPoint e)               = makeStripes e
 --makeStripes n p@(ProcedureDeclaration _ _) = makeStripes n (simpleProcedureBody p)
 --makeStripes n f@(FunctionDeclaration _ _)  = makeStripes n (simpleFunctionBody f)
-makeStripes n (Sequence xs)                = stripes n xs
-makeStripes _ e                            = [[e]]
+makeStripes (Sequence xs)                = map Sequence . stripes $ xs
+makeStripes e                            = [e]
 
 
-stripes :: Int -> [Expression] -> [[Expression]]
-stripes n = filter ( (>n) . length) . subsequences . take 16 
+stripes :: [Expression] -> [[Expression]]
+--stripes n = filter ( (>n) . length) . subsequences . map Sequence . chunksOf 2 
+stripes = filter ( (>1) . length)  . segments . take 16
 
+segments = concatMap tails . inits
+
+lochbaum :: [a] -> [[a]]
+lochbaum (x:xs) = [x] :  chunksOf 2 xs  ++ chunksOf 2 (x:xs)

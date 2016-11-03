@@ -53,12 +53,16 @@ spec = do
         hasDuplicateCode (js code) `shouldBe` False
 
       it "is False when a function no repeat code" $ do
-        let code = "function f(){Poner(Verde) Sarasa() Sarasa()} function Sarasa(){Mover(Este) Mover(Este) Mover(Este)}"
+        let code = "function f(){ Proc() return (hayBolitas(Verde) && puedeMover(Este))} function Proc(){Poner(Verde) Mover(Sur)}"
         hasDuplicateCode (js code) `shouldBe` False
 
       it "is False when a function no repeat code" $ do
-        let code = "function f(){ Proc() return (hayBolitas(Verde) && puedeMover(Este))} function Proc(){Poner(Verde) Mover(Sur)}"
+        let code = "function f(){Poner(Verde) Sarasa() Sarasa()} function Sarasa(){Mover(Este) Mover(Este) }"
         hasDuplicateCode (js code) `shouldBe` False
+
+      it "is False when a function has overlapped repeated code" $ do
+        let code = "function f(){Poner(Verde) Sarasa() Sarasa()} function Sarasa(){Mover(Este) Mover(Este) Mover(Este) }"
+        hasDuplicateCode (js code) `shouldBe` True
 
       it "is True when two functions are equals" $ do
         let code = "function f(){if(true){}else{} return x} function g(){if(true){}else{} return x}"
@@ -77,7 +81,7 @@ spec = do
         hasDuplicateCode (js code) `shouldBe` True
 
       it "is True when a function repeat code" $ do
-        let code = "function f(){Poner(Verde) Mover(Norte) Poner(Verde) Mover(Este) Poner(Verde) Mover(Sur) Poner(Verde) Mover(Oeste) }"
+        let code = "function f(){Poner(Verde) Mover(Norte) Poner(Verde) Mover(Norte) Poner(Verde) Mover(Norte) Poner(Verde) Mover(Norte) }"
         hasDuplicateCode (js code) `shouldBe` True
 
       it "is True when a function repeat code" $ do
@@ -89,7 +93,7 @@ spec = do
         hasDuplicateCode (js code) `shouldBe` True
 
       it "is True when a function repeat code" $ do
-        let code = "function f(){if(puedeMover(Este)){ Mover(Este) PonerDiagonal() } else{ Mover(Oeste) PonerDiagonal() } }"
+        let code = "function f(){if(puedeMover(Este)){ Mover(Este) PonerDiagonal() } else{ Mover(Este) PonerDiagonal() } }"
         hasDuplicateCode (js code) `shouldBe` True
 
       it "is True when a function repeat code" $ do
