@@ -64,18 +64,12 @@ stripesOf :: Expression -> [[Expression]]
 stripesOf = map makeStripes . expressionsOf
 
 makeStripes :: Expression -> [Expression]
---makeStripes (EntryPoint e)               = makeStripes e
---makeStripes n p@(ProcedureDeclaration _ _) = makeStripes n (simpleProcedureBody p)
---makeStripes n f@(FunctionDeclaration _ _)  = makeStripes n (simpleFunctionBody f)
 makeStripes (Sequence xs)                = map Sequence . stripes $ xs
 makeStripes e                            = [e]
 
 
 stripes :: [Expression] -> [[Expression]]
---stripes n = filter ( (>n) . length) . subsequences . map Sequence . chunksOf 2 
 stripes = filter ( (>1) . length)  . segments . take 16
 
+segments :: [Expression] -> [[Expression]]
 segments = concatMap tails . inits
-
-lochbaum :: [a] -> [[a]]
-lochbaum (x:xs) = [x] :  chunksOf 2 xs  ++ chunksOf 2 (x:xs)
