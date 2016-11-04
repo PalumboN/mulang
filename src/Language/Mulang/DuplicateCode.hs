@@ -31,6 +31,7 @@ isApplication (Application i es) = True
 isApplication _                  = False
 
 
+
 hasDuplicates ::Eq a => [a] -> Bool
 hasDuplicates xs = nub xs /= xs
 
