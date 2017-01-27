@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/mumuki/mulang.svg?branch=master)](https://travis-ci.org/mumuki/mulang)
-
+ 
 Mulang
 ======
 > The Universal, Multi Language, Multi Paradigm code analyzer
